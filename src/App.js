@@ -21,8 +21,44 @@ const ResetPasswordPage = React.lazy(() => import("./pages/auth/reset-password.j
 function App() {
   const cookies = new Cookies();
   const loggedInUser = cookies.get('currentUser');
-  
-  cookies.set('backendProps', {'domain': 'http://127.0.0.1:8000', path:'/'})
+
+  useEffect(() => {
+
+    if (cookies.get('backendProps') === undefined) {
+      fetch(
+        "http://127.0.0.1:8000/register/indentify-blogdi/",
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            domain: window.location.origin
+          })
+        }
+      )
+        .then((res) => res.json())
+        .then((response) => {
+          console.log(response)
+          if (response.statusCode === 200) {
+            cookies.set('backendProps', response, {path:'/'})
+
+            fetch(response.domain + "/api/blog/meta-info/", {
+              method: "GET",
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            })
+              .then((res) => res.json())
+              .then((response) => {
+                cookies.set('siteMetaInfo', response, {path:'/'})
+                console.log(response)
+              })
+          }
+        })
+    }
+
+  }, []);
 
   return (
     <div className="App">

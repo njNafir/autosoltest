@@ -16,7 +16,7 @@ export default function Login() {
 
     // console.log(values)
 
-    fetch(backendProps.domain + "/api/login", {
+    fetch(backendProps.domain + "/api/blog/login", {
         method: "POST",
         header: {
             'Content-Type': 'application/json'

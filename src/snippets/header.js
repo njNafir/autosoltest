@@ -10,7 +10,29 @@ export function SiteHeader(props) {
   const [menuProps, setMenuProps] = useState([]);
 
   useEffect(() => {
-    if (backendProps.domain !== null){}
+    if (backendProps.domain !== null){
+        fetch(backendProps.domain + "/api/blog/meta-info/", {
+            method: "GET",
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          })
+            .then((res) => res.json())
+            .then((response) => {
+              cookies.set('siteMetaInfo', response, {path:'/'})
+
+              let menus = []
+
+              response.header_menu_options.map((item) => {
+                menus.push(
+                    <Menu.Item key={item.title} onClick={(e) => { window.location.href = item.url }}>
+                        {item.title}
+                    </Menu.Item>)
+              })
+
+              setMenuProps(menus)
+            })
+    }
   }, [])
 
   return (
